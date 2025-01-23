@@ -1,0 +1,36 @@
+---
+- name: Install mariadb, PyMySQL
+  apt:
+    name: [mariadb-server, python3-pymysql]
+    state: present
+    update_cache: true
+  notify: restart_mariadb
+
+- name: Create user
+  mysql_user:
+    login_unix_socket: "{{ login_socket }}"
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    host: "%"
+    priv: "{{ db_name }}.*:all"
+
+- name: Create database
+  mysql_db:
+    login_unix_socket: "{{ login_socket }}"
+    name: "{{ db_name }}"
+    state: present
+  register: db_status
+  
+- name: Copy db init
+  copy:
+    src: init.sql
+    dest: /tmp/init.sql
+  when: db_status.changed
+
+- name: Init db
+  mysql_db:
+    login_unix_socket: "{{ login_socket }}"
+    name: "{{ db_name }}"
+    state: import
+    target: /tmp/init.sql
+  when: db_status.changed

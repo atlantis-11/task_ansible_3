@@ -1,0 +1,16 @@
+- hosts: db
+  vars_files:
+    - db_credentials_{{ env }}.yml
+  become: true
+  roles:
+    - db
+
+- hosts: web
+  vars:
+    site_name: example.com
+    db_host: "{{ groups['db'][0] }}"
+  vars_files:
+    - db_credentials_{{ env }}.yml
+  become: true
+  roles:
+    - web
