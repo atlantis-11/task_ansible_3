@@ -1,2 +1,1 @@
----
-# vars file for web
+htpasswd_path: /etc/apache2/.htpasswd

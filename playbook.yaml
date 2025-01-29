@@ -10,6 +10,7 @@
     site_name: example.com
     db_host: "{{ groups['db'][0] }}"
   vars_files:
+    - web_credentials_{{ env }}.yml
     - db_credentials_{{ env }}.yml
   become: true
   roles:

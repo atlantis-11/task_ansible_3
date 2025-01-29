@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'on');
 
 // Load database credentials
-$credentials = parse_ini_file('db_credentials.ini');
+$credentials = parse_ini_file('../db_credentials.ini');
 
 // Check if credentials are properly loaded
 if (!$credentials) {

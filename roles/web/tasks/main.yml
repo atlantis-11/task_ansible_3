@@ -6,7 +6,7 @@
 
 - name: Install nginx
   apt:
-    name: [nginx, php8.1-fpm, php8.1-mysqlnd]
+    name: [nginx, php8.1-fpm, php8.1-mysqlnd, python3-passlib]
     state: present
     update_cache: true
 
@@ -23,10 +23,17 @@
     state: link
   notify: restart_nginx
 
+- name: Add a user to htpasswd
+  htpasswd:
+    path: "{{ htpasswd_path }}"
+    name: "{{ web_user }}"
+    password: "{{ web_password }}"
+  notify: restart_nginx
+
 - name: Add pages
   copy:
     src: pages/
-    dest: /var/www/{{ site_name }}
+    dest: /var/www/{{ site_name }}/public
 
 - name: Add db_credentials.ini
   template:

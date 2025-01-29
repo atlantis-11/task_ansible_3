@@ -24,7 +24,7 @@
 - name: Copy db init
   copy:
     src: init.sql
-    dest: /tmp/init.sql
+    dest: /tmp/
   when: db_status.changed
 
 - name: Init db
@@ -33,4 +33,22 @@
     name: "{{ db_name }}"
     state: import
     target: /tmp/init.sql
+  when: db_status.changed
+
+- name: Populate db
+  mysql_query:
+    login_unix_socket: "{{ login_socket }}"
+    login_db: "{{ db_name }}"
+    query: insert into users (name, email) value ('{{ item.key }}', '{{ item.value.email }}')
+  with_dict:
+    John Doe:
+      email: john.doe@example.com
+    Jane Smith:
+      email: jane.smith@example.com
+    Alice Johnson:
+      email: alice.johnson@example.com
+    Bob Brown:
+      email: bob.brown@example.com
+    Charlie Davis:
+      email: charlie.davis@example.com
   when: db_status.changed
